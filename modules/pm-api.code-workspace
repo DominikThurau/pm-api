@@ -1,0 +1,15 @@
+{
+  "folders": [
+	{
+		"name": "pm-api",
+		"path": ".."
+	},
+	{
+		"name": "pocketbase_0.7.9_darwin_amd64",
+		"path": "../../../../Downloads/pocketbase_0.7.9_darwin_amd64"
+	}
+],
+  "settings": {
+    "nuxt.isNuxtApp": false
+  }
+}

@@ -1,26 +1,84 @@
 import { getData } from "./modules/data.js";
 import { readCache, writeCache } from "./modules/cache.js";
+import { writeData } from "./modules/writeData.js";
 import * as dotenv from "dotenv";
 import express from "express";
+import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
+//import cors from "cors";
+import bodyParser from "body-parser";
+import Project from "./models/Project.js";
+import cors from "cors";
+import { registerReadEndpoints } from "./modules/endpoints.js";
 
 dotenv.config();
-
-class Dog {
-  constructor(name, age, breed) {
-    this.name = name;
-    this.age = age;
-    this.breed = breed;
-  }
-}
-
-const myDog = new Dog("Buddy", 3, "Labrador");
-console.log(myDog.age);
 
 //Cache from API requests
 let cache = {};
 const delay = 15000; //15 seconds
 const app = express();
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 const port = process.env.PORT || 3000;
+//const client = new MongoClient(process.env.DATABASE_URI);
+let database;
+async function main() {
+  try {
+    registerReadEndpoints({ app });
+    // Connect to the MongoDB cluster
+    await mongoose.connect(process.env.DATABASE_URI);
+    console.log("Connected correctly to database");
+
+    database = mongoose.connection;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/*async function listDatabases(client) {
+  let databasesList = await mongoose.connection.db().admin().listDatabases();
+
+  console.log("Databases:");
+  databasesList.databases.forEach((db) => console.log(` - ${db.name}`));
+}*/
+
+main().catch(console.error);
+
+//Write Data to Database
+app.post("/writeData/:collection", async (req, res) => {
+  console.log("Endpoint called");
+  let collection = database.collection(req.params.collection);
+  let data;
+  console.log(req.body);
+
+  if (req.body) {
+    console.log("Body found");
+    data = req.body;
+  } else {
+    console.log("No body found");
+    data = { name: "Dominik Thurau", age: 21, city: "Heidelberg" };
+  }
+
+  await writeData(collection, data);
+  res.send("Data written to database");
+});
+
+//Read Data from Database
+/*
+app.get("/readData/collection", async (req, res) => {
+  console.log("Endpoint called");
+  console.log("Endpoint called without id");
+  res.send(await readData(database.collection(req.params.collection)));
+});*/
+
+//Read Data from Database
+/*
+app.get("/readData/:id", async (req, res) => {
+  console.log("Endpoint called");
+  console.log("Endpoint called with id: " + req.params.id);
+  res.send(await Project.findById(req.params.id));
+});*/
 
 //OnLoad
 readCache().then((data) => {
@@ -70,88 +128,37 @@ function cacheOutdated() {
   }
 }
 
-/*
-getData().then((data) => {
-  console.log(data);
-});
-getData("1").then((data) => {
-  console.log(data);
-});
+//Create project
+app.post("/projects/create", async (req, res) => {
+  console.log("Create Project Endpoint called");
+  const project = await Project.create(req.body);
+  console.log(project);
 
-getData().then((data) => {
-  console.log(data);
-});*/
-
-/* import express from "express";
-import fetch from "node-fetch";
-import fs from "fs";
-
-const app = express();
-const port = 3000;
-
-const delay = 10000;
-const cache = new Map();
-cleanDatabase();
-app.get("/", (req, res) => {
-  fs.readFile("cache.txt", function (err, buf) {
-    console.log(buf.toString());
-  });
-  res.send("Hello World!");
+  res.send("Data written to database");
 });
 
-const products = app.get("/products/:id", async (req, res) => {
-  let product = {};
-  if (cacheOutdated(parseInt(req.params.id))) {
-    console.log("cache outdated");
-    product = await fetch("https://dummyjson.com/products/" + req.params.id)
-      .then((res) => res.json())
-      .then((json) => {
-        return json;
-      });
-    addToCache(product);
-  } else {
-    console.log("cache valid");
+//Update project
+app.put("/projects/:id/edit", async (req, res) => {
+  console.log("Update Project Endpoint called");
+  try {
+    let project = await Project.findById(req.params.id).update(req.body);
+    console.log(project);
+    res.send("Data written to database");
+  } catch (e) {
+    console.log("Error happend:", e);
+    res.status(500).send("Error happend");
+    res.send("Failed to write data to database");
   }
-  product = JSON.parse(cache.get(parseInt(req.params.id))).data;
-  console.log(cache);
-  res.send(product);
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+//Find project by id
+app.get("/projects/:id", async (req, res) => {
+  const project = await Project.findById(req.params.id);
+  res.send(project);
 });
 
-function cacheOutdated(id) {
-  console.log(cache.has(id));
-  if (cache.has(id)) {
-    return cache.get(id).expires < Date.now();
-  }
-  return true;
-}
-
-function addToCache(data) {
-  cache.set(
-    data.id,
-    JSON.stringify({ expires: Date.now() + delay, data: data })
-  );
-
-  fs.appendFile("cache.json", JSON.stringify(data, null, 2) + ",", (err) => {
-    if (err) console.log(err);
-    console.log("Successfully Written to File.");
-  });
-}
-
-function cleanDatabase() {
-  setTimeout(() => {
-    let deletedEntries = 0;
-    for (let entry of cache.values()) {
-      if (JSON.parse(entry).expires < Date.now()) {
-        cache.delete(JSON.parse(entry).data.id);
-        deletedEntries++;
-      }
-    }
-    console.log("Deleted " + deletedEntries + " entries");
-    cleanDatabase();
-  }, delay);
-}
- */
+//Get all projects
+app.get("/projects", async (req, res) => {
+  const project = await Project.find();
+  res.send(project);
+});
