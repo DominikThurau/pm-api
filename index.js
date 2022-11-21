@@ -52,3 +52,4 @@ main().catch(console.error);
 app.listen(port, () => {
   console.log("Server started on port " + port);
 });
+app.use(express.static("www"));

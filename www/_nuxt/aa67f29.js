@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[6],{294:function(n,e,t){"use strict";t.r(e);var o={name:"IndexPage",beforeMount:function(){this.$router.push("/projects")}},r=t(57),component=Object(r.a)(o,(function(){return(0,this._self._c)("div")}),[],!1,null,null,null);e.default=component.exports}}]);

@@ -5,9 +5,10 @@ import { collection } from "../index.js";
 
 //Post data to database
 export function registerPOSTEndpoints({ app }) {
-  app.post("/projects/create", async (req, res) => {
+  app.post("/api/projects/create", async (req, res) => {
     try {
-      collection.insertOne(req.body);
+      const project = new Project(req.body);
+      project.save();
       res.status(200).send("Data succesfully written to database");
     } catch (error) {
       res.status(500).send("An error happened");
@@ -17,7 +18,7 @@ export function registerPOSTEndpoints({ app }) {
 
 //Update data in database
 export function registerPUTEndpoints({ app }) {
-  app.put("/projects/:projectID/edit", async (req, res) => {
+  app.put("/api/projects/:projectID/edit", async (req, res) => {
     try {
       //Check if id is valid
       if (mongoose.isValidObjectId(req.params.projectID)) {
@@ -41,41 +42,10 @@ export function registerPUTEndpoints({ app }) {
 
 export function registerGETEndpoints({ app }) {
   //Get all projects
-  app.get("/projects", async (req, res) => {
+  app.get("/api/projects", async (req, res) => {
     try {
-      //console.log("Endpoint called", req.header("PRIVATE-TOKEN"));
-      /*await axios
-        .get("https://gitlab.ueberbit.de/api/v4/projects/", {
-          headers: {
-            "PRIVATE-TOKEN": req.header("PRIVATE-TOKEN"),
-          },
-        })
-        .then((response) => {
-          //Cleaning up the Data
-          let shortenedData = [];
-          response.data.forEach((element) => {
-            const {
-              id,
-              name,
-              description,
-              name_with_namespace,
-              path,
-              web_url,
-              avatar_url,
-            } = element;
-            shortenedData.push({
-              id,
-              name,
-              description,
-              name_with_namespace,
-              path,
-              web_url,
-              avatar_url,
-            });
-          });
-          res.send(shortenedData);
-        });*/
-      const projects = await collection.find({}).toArray();
+      const projects = await Project.find({});
+      console.log(projects);
       res.send(projects);
     } catch (error) {
       console.log(error);
@@ -84,7 +54,7 @@ export function registerGETEndpoints({ app }) {
   });
 
   //Get a single project
-  app.get("/projects/:projectID", async (req, res) => {
+  app.get("/api/projects/:projectID", async (req, res) => {
     try {
       console.log(
         req.params.projectID,
@@ -109,7 +79,7 @@ export function registerGETEndpoints({ app }) {
 
   //Endpoints for PM-Dashboard
   //Get all members of a project
-  app.get("/projects/:projectID/members", async (req, res) => {
+  app.get("/api/projects/:projectID/members", async (req, res) => {
     try {
       await axios
         .get(
@@ -138,7 +108,7 @@ export function registerGETEndpoints({ app }) {
   });
 
   //Get budget in percent
-  app.get("/projects/:projectID/budget", async (req, res) => {
+  app.get("/api/projects/:projectID/budget", async (req, res) => {
     try {
       console.log("Endpoint called");
       let project;
@@ -180,7 +150,7 @@ export function registerGETEndpoints({ app }) {
   });
 
   //Get open tickets
-  app.get("/projects/:projectID/tickets", async (req, res) => {
+  app.get("/api/projects/:projectID/tickets", async (req, res) => {
     try {
       console.log("Endpoint called");
       let project;

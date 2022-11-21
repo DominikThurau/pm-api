@@ -1,0 +1,1 @@
+mongorestore -d pm-api /dump/pm-api

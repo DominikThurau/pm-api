@@ -4,7 +4,7 @@ services:
     restart: always
     build: .
     ports:
-      - 3030:4000
+      - 4000:4000
     volumes:
       - ./:/code
   mongo:
@@ -13,5 +13,7 @@ services:
       - 27017:27017
     volumes:
       - mongodb:/data/db
+      - ./scripts/mongorestore.sh:/docker-entrypoint-initdb.d/mongorestore.sh
+      - ./dump:/dump
 volumes:
   mongodb:
