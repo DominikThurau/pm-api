@@ -2,7 +2,7 @@ import axios from "axios";
 import mongoose from "mongoose";
 import Project from "../models/Project.js";
 
-export async function writeData(collection, data) {
+export async function writeData(data) {
   collection.insertOne(data);
   console.log("Data written to database");
 }

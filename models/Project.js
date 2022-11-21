@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const projectSchema = new Schema({
-  title: { type: Number, required: true }, // String is shorthand for {type: String}
+  projectID_GitLab: { type: Number, required: true },
+  projectID_COGO: { type: Number, required: true },
+  projectID_DIAS: { type: Number, required: true },
+  title: { type: String, required: true },
+  client: String,
   description: String,
-  links: [Object],
-  cache: Object,
-
+  links: [{ linkTitle: String, linkURL: String }],
 });
 
 const Project = mongoose.model("Project", projectSchema);

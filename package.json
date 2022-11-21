@@ -12,7 +12,8 @@
     "global": "^4.4.0",
     "mongodb": "^4.10.0",
     "mongoose": "^6.7.0",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "swagger-ui-express": "^4.6.0"
   },
   "name": "ueberbit-pm-api",
   "version": "1.0.0",
