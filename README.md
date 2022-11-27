@@ -1,10 +1,11 @@
 # PM-API
 
 ## Setup the project
+### Make sure your Docker-Desktop is running
 
 1. clone the project
-2. rename .env.dist to .env and configure PORT
-3. run docker-compose up
-4. yarn run start
+2. rename .env.dist to .env
+3. run docker-compose build
+4. run docker-compose up
 
-##### -> Now you should be able to call localhost:'PORT'/products
+##### -> Now you should be able to call localhost:4000/products
