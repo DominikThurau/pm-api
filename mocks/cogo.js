@@ -42,15 +42,15 @@ const tickets = [
 //Register Endpoints
 export function registerCogoMock(app) {
   //Get all tickets
-  app.get("/mocks/cogo/tickets", (req, res) => {
+  app.get("/api/mocks/cogo/tickets", (req, res) => {
     res.send(tickets);
   });
   //Get ticket by ID
-  app.get("/mocks/cogo/projects/:projectID/tickets", (req, res) => {
+  app.get("/api/mocks/cogo/projects/:projectID/tickets", (req, res) => {
     try {
       console.log(req.params.projectID);
       const projectTickets = tickets.filter(
-        (ticket) => ticket.projectID === req.params.projectID
+        (ticket) => ticket.projectID == req.params.projectID
       );
       //console.log(projectTickets);
       if (projectTickets.length > 0) {
@@ -64,10 +64,10 @@ export function registerCogoMock(app) {
     }
   });
   //Get a single ticket
-  app.get("/mocks/cogo/tickets/:ticketID", (req, res) => {
+  app.get("/api/mocks/cogo/tickets/:ticketID", (req, res) => {
     try {
       const ticket = tickets.filter(
-        (ticket) => ticket.ticketID === req.params.ticketID
+        (ticket) => ticket.ticketID == req.params.ticketID
       )[0];
       if (ticket) {
         res.send(ticket);

@@ -11,10 +11,12 @@ import {
   registerPOSTEndpoints,
   registerPUTEndpoints,
   registerGETEndpoints,
+  registerDELETEEndpoints,
 } from "./modules/endpoints.js";
 
 import { registerCogoMock } from "./mocks/cogo.js";
 import { registerDiasMock } from "./mocks/dias.js";
+import { registerGitLabMock } from "./mocks/gitlab.js";
 
 //Loading environment variables
 dotenv.config();
@@ -34,8 +36,10 @@ async function main() {
     registerPOSTEndpoints({ app });
     registerPUTEndpoints({ app });
     registerGETEndpoints({ app });
+    registerDELETEEndpoints({ app });
     registerCogoMock(app);
     registerDiasMock(app);
+    registerGitLabMock(app);
     // Connect to the MongoDB cluster
     await mongoose.connect(process.env.DATABASE_URI);
     console.log("Connected correctly to database");

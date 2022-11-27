@@ -8,6 +8,8 @@ const projectSchema = new Schema({
   client: String,
   description: String,
   links: [{ linkTitle: String, linkURL: String }],
+  startDate: Date,
+  releaseDate: Date,
 });
 
 const Project = mongoose.model("Project", projectSchema);
