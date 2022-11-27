@@ -8,7 +8,7 @@
 3. run docker-compose build
 4. run docker-compose up
 
-##### -> Now you should be able to call localhost:4000/products
+##### -> Now you should be able to call http://localhost:4000/products
 In der Oberfläche kann jetzt ein neues Projekt angelegt werden.
 
 Damit die Endpunkte funktionieren müssen alle IDs eines Projekts den Wert ***951*** haben (GitLab, Cogo, DIAS)!
